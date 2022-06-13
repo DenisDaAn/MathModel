@@ -68,10 +68,7 @@ fun SampleLineGraph(lines: List<List<DataPoint>>, countstep: Int) {
                         LinePlot.Connection(color = Color.Red),
                         LinePlot.Intersection(color = Color.Red),
                         LinePlot.Highlight(color = Color.Red)
-                    ), LinePlot.Line(lines[1],
-                        LinePlot.Connection(color = Color.Black),
-                        LinePlot.Intersection(color = Color.Black),
-                        LinePlot.Highlight(color = Color.Black))
+                    )
                 ),
                 grid = LinePlot.Grid(Color.Blue, steps = countstep),
             ),

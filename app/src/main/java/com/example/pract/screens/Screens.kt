@@ -282,7 +282,6 @@ fun NOneScreen(navController: NavController) {
                     val starting = yearstart.value.toInt()
                     val ending = yearend.value.toInt()
                     var infopeople = countpeople.value.toFloat()
-                    val couner = ending - starting
                     val coef = coefficientborn.value.toFloat() - coefficientdie.value.toFloat()
                     val f : MutableList<DataPoint> = mutableListOf()
                     for(i in starting..ending){
