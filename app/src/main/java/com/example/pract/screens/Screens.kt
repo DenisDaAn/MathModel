@@ -1,6 +1,7 @@
 package com.example.pract.screens
 
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -108,10 +109,15 @@ fun NOneScreen(navController: NavController) {
     val yearend = remember { mutableStateOf("") }
     val coefficientborn = remember { mutableStateOf("") }
     val coefficientdie = remember { mutableStateOf("") }
+    val bool = remember { mutableStateOf("") }
+    val focusManager = LocalFocusManager.current
     Column(modifier = Modifier.fillMaxSize(), Arrangement.SpaceEvenly) {
-        Text(
-            "Модель Мальтуса", textAlign = TextAlign.Center, fontSize = 18.sp
-        )
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+            Text(
+                "Модель Мальтуса", fontSize = 18.sp
+            )
+        }
+
 
         Row(
             modifier = Modifier
@@ -120,10 +126,10 @@ fun NOneScreen(navController: NavController) {
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
 
-            val focusManager = LocalFocusManager.current
+
             TextField(
-                countpeople.value,
-                { countpeople.value = it },
+                yearstart.value,
+                { yearstart.value = it },
                 textStyle = LocalTextStyle.current.copy(
                     textAlign = TextAlign.Center, fontSize = 18.sp
                 ),
@@ -151,8 +157,8 @@ fun NOneScreen(navController: NavController) {
             )
 
             TextField(
-                yearstart.value,
-                { yearstart.value = it },
+                yearend.value,
+                { yearend.value = it },
                 textStyle = LocalTextStyle.current.copy(
                     textAlign = TextAlign.Center, fontSize = 18.sp
                 ),
@@ -177,8 +183,8 @@ fun NOneScreen(navController: NavController) {
                 )
             )
             TextField(
-                yearend.value,
-                { yearend.value = it },
+                countpeople.value,
+                { countpeople.value = it },
                 textStyle = LocalTextStyle.current.copy(
                     textAlign = TextAlign.Center, fontSize = 18.sp
                 ),
@@ -253,8 +259,6 @@ fun NOneScreen(navController: NavController) {
                 )
             )
         }
-        val bool = mutableStateOf(false)
-        var f: Array<DataPoint> = arrayOf()
         Row(
             Modifier
                 .fillMaxWidth(), Arrangement.SpaceEvenly
@@ -263,39 +267,48 @@ fun NOneScreen(navController: NavController) {
                 modifier = Modifier
                     .width(200.dp)
                     .height(40.dp),
-                onClick = {
-                    val starting = yearstart.value.toInt()
-                    val limiter = yearend.value.toInt()
-                    var infopeople = countpeople.value.toInt()
-                    val coef = coefficientborn.value.toInt() - coefficientdie.value.toInt()
-
-                    for(i in starting..limiter){
-                        f[i] = DataPoint((i.toString() + "f").toFloat(), (infopeople.toString() + "f").toFloat())
-                        infopeople *= coef
-                    }
-                    bool.value = true
-                },
+                onClick = { bool.value += "1" },
             ) {
-                Text(text = "da")
-
-            }
-            if (bool.value) {
-                val counterstep = f.size
-                val q = listOf(
-                    f.toList()
-                )
-                SampleLineGraph(q, counterstep)
+                Text(text = "Расчитать")
             }
         }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(350.dp)
+        ) {
+            if (bool.value.isNotEmpty()) {
+                if (coefficientborn.value.isNotEmpty() and coefficientdie.value.isNotEmpty() and countpeople.value.isNotEmpty() and yearend.value.isNotEmpty() and yearstart.value.isNotEmpty()) {
+                    val starting = yearstart.value.toInt()
+                    val ending = yearend.value.toInt()
+                    var infopeople = countpeople.value.toFloat()
+                    val couner = ending - starting
+                    val coef = coefficientborn.value.toFloat() - coefficientdie.value.toFloat()
+                    val f : MutableList<DataPoint> = mutableListOf()
+                    for(i in starting..ending){
+                        f.add(DataPoint(i.toFloat(), infopeople))
+                        infopeople *=coef
+                    }
+                    val q : List<List<DataPoint>> = listOf(f.toList(), listOf(DataPoint(1999f, 0f), DataPoint(2009f, 0f)))
+                    SampleLineGraph(q, f.size)
 
+                } else {
+                    bool.value = ""
+                    Toast.makeText(LocalContext.current, "Заполните все поля", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+
+        }
     }
-
 }
 
 @Composable
 fun NTwoScreen(navController: NavController) {
-    Text("Модель Лотки-Вольтерра")
+    Column(Modifier.fillMaxSize()) {
+        Text("Модель Лотки-Вольтерра")
 
+    }
 }
 
 @Composable
@@ -307,5 +320,3 @@ fun NThreeScreen(navController: NavController) {
 fun NFourScreen(navController: NavController) {
     Text("Выбор оптимального решения с помощью дерева решений")
 }
-
-
