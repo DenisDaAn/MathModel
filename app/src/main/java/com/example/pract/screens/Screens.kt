@@ -289,7 +289,7 @@ fun NOneScreen(navController: NavController) {
                         f.add(DataPoint(i.toFloat(), infopeople))
                         infopeople *=coef
                     }
-                    val q : List<List<DataPoint>> = listOf(f.toList(), listOf(DataPoint(1999f, 0f), DataPoint(2009f, 0f)))
+                    val q : List<List<DataPoint>> = listOf(f.toList())
                     SampleLineGraph(q, f.size)
 
                 } else {
@@ -320,3 +320,4 @@ fun NThreeScreen(navController: NavController) {
 fun NFourScreen(navController: NavController) {
     Text("Выбор оптимального решения с помощью дерева решений")
 }
+//listOf(DataPoint(starting.toFloat(), 0f), DataPoint(ending.toFloat(), 0f))
