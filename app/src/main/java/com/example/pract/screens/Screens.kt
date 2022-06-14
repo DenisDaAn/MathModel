@@ -1,7 +1,6 @@
 package com.example.pract.screens
 
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -245,15 +244,16 @@ fun NOneScreen(navController: NavController) {
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 singleLine = true,
                 modifier = Modifier
-                    .width(150.dp)
+                    .width(100.dp)
                     .height(maxheight),
                 placeholder = {
                     Text(
-                        "Коэффициент смерти",
+                        "Начальная численность населения",
                         fontSize = 11.sp,
                         textAlign = TextAlign.Center
                     )
-                }, colors = TextFieldDefaults.outlinedTextFieldColors(
+                },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = Color.Green,
                     unfocusedBorderColor = Color.Green
                 )
@@ -283,14 +283,13 @@ fun NOneScreen(navController: NavController) {
                     val ending = yearend.value.toInt()
                     var infopeople = countpeople.value.toFloat()
                     val coef = coefficientborn.value.toFloat() - coefficientdie.value.toFloat()
-                    val f : MutableList<DataPoint> = mutableListOf()
-                    for(i in starting..ending){
+                    val f: MutableList<DataPoint> = mutableListOf()
+                    for (i in starting..ending) {
                         f.add(DataPoint(i.toFloat(), infopeople))
-                        infopeople *=coef
+                        infopeople *= coef
                     }
-                    val q : List<List<DataPoint>> = listOf(f.toList())
+                    val q: List<List<DataPoint>> = listOf(f.toList())
                     SampleLineGraph(q, f.size)
-
                 } else {
                     bool.value = ""
                     Toast.makeText(LocalContext.current, "Заполните все поля", Toast.LENGTH_SHORT)
@@ -305,8 +304,22 @@ fun NOneScreen(navController: NavController) {
 @Composable
 fun NTwoScreen(navController: NavController) {
     Column(Modifier.fillMaxSize()) {
-        Text("Модель Лотки-Вольтерра")
+        Column(modifier = Modifier.fillMaxSize(), Arrangement.SpaceEvenly) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Text("Модель Лотки-Вольтерра", fontSize = 18.sp)
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 30.dp, bottom = 10.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
 
+            }
+        }
     }
 }
 

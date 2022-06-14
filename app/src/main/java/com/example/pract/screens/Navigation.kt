@@ -67,7 +67,8 @@ fun SampleLineGraph(lines: List<List<DataPoint>>, countstep: Int) {
                         dataPoints = lines[0],
                         LinePlot.Connection(color = Color.Red),
                         LinePlot.Intersection(color = Color.Red),
-                        LinePlot.Highlight(color = Color.Red)
+                        LinePlot.Highlight(color = Color.Red),
+                        //LinePlot.XAxis(stepSize = 20.dp, steps = 1, paddingBottom = 10.dp, paddingTop = 10.dp, unit = 1f, roundToInt = false, content = {}
                     )
                 ),
                 grid = LinePlot.Grid(Color.Blue, steps = countstep),
