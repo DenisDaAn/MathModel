@@ -1,13 +1,19 @@
 package com.example.pract.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -41,6 +47,7 @@ fun MainNavigation() {
 
 @Composable
 fun SampleLineGraph(lines: List<List<DataPoint>>, countstep: Int) {
+    val context = LocalContext.current
     val stroke = Stroke(
         width = 5f,
         pathEffect = PathEffect.dashPathEffect(floatArrayOf(15f, 15f), 1f)
@@ -78,11 +85,52 @@ fun SampleLineGraph(lines: List<List<DataPoint>>, countstep: Int) {
                 .height(350.dp)
                 .padding(20.dp),
             onSelection = { xLine, points ->
-
+                Toast.makeText(context, "$points", Toast.LENGTH_SHORT).show()
             }
         )
     }
 
+}
+
+@Composable
+fun RowScope.TableCell(
+    text: String,
+    weight: Float
+) {
+    Text(
+        text = text,
+        Modifier
+            .border(1.dp, Color.Black)
+            .weight(weight)
+            .padding(8.dp)
+    )
+}
+
+@Composable
+fun DrawTable(preys: MutableList<Float>, predators: MutableList<Float>) {
+    val column1Weight = .3f // 30%
+    val column2Weight = .7f // 70%
+    LazyColumn(
+        Modifier
+            .fillMaxWidth()
+            .height(400.dp)
+            .padding(16.dp)
+    ) {
+        item {
+            Row(Modifier.background(Color.Gray)) {
+                TableCell(text = "Жертвы", weight = column1Weight)
+                TableCell(text = "Хищники", weight = column2Weight)
+            }
+        }
+        items(preys.size) {
+            Row(Modifier.fillMaxWidth()) {
+                for (i in 0..preys.size) {
+                    TableCell(text = preys[i].toString(), weight = column1Weight)
+                    TableCell(text = predators[i].toString(), weight = column2Weight)
+                }
+            }
+        }
+    }
 }
 
 
