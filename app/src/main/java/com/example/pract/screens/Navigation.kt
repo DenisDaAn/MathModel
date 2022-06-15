@@ -1,5 +1,6 @@
 package com.example.pract.screens
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -8,6 +9,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -48,6 +51,7 @@ fun MainNavigation() {
 @Composable
 fun SampleLineGraph(lines: List<List<DataPoint>>, countstep: Int) {
     val context = LocalContext.current
+    val points2 = remember { mutableStateOf("") }
     val stroke = Stroke(
         width = 5f,
         pathEffect = PathEffect.dashPathEffect(floatArrayOf(15f, 15f), 1f)
@@ -85,9 +89,10 @@ fun SampleLineGraph(lines: List<List<DataPoint>>, countstep: Int) {
                 .height(350.dp)
                 .padding(20.dp),
             onSelection = { xLine, points ->
-                Toast.makeText(context, "$points", Toast.LENGTH_SHORT).show()
+                points2.value = points.toString()
             }
         )
+        Text(text = points2.value)
     }
 
 }
@@ -122,14 +127,14 @@ fun DrawTable(preys: MutableList<Float>, predators: MutableList<Float>) {
                 TableCell(text = "Хищники", weight = column2Weight)
             }
         }
-        items(preys.size) {
+        /*items(predators.size) {
             Row(Modifier.fillMaxWidth()) {
-                for (i in 0..preys.size) {
+                for (i in 0..predators.size) {
                     TableCell(text = preys[i].toString(), weight = column1Weight)
                     TableCell(text = predators[i].toString(), weight = column2Weight)
                 }
             }
-        }
+        }*/
     }
 }
 

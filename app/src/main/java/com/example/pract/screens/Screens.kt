@@ -1,6 +1,7 @@
 package com.example.pract.screens
 
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -259,6 +260,9 @@ fun NOneScreen(navController: NavController) {
                 )
             )
         }
+        val bool1 = remember {
+            mutableStateOf("")
+        }
         Row(
             Modifier
                 .fillMaxWidth(), Arrangement.SpaceEvenly
@@ -271,12 +275,28 @@ fun NOneScreen(navController: NavController) {
             ) {
                 Text(text = "Расчитать")
             }
+            Button(
+                modifier = Modifier
+                    .width(200.dp)
+                    .height(40.dp),
+                onClick = { bool1.value += "1" },
+            ) {
+                Text(text = "Автозаполнение")
+            }
         }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(350.dp)
         ) {
+            if(bool1.value.isNotEmpty()){
+                yearstart.value = "1950"
+                yearend.value = "2050"
+                coefficientborn.value = "0.0212"
+                coefficientdie.value = "0.007"
+                countpeople.value = "4564000"
+                bool1.value = ""
+            }
             if (bool.value.isNotEmpty()) {
                 if (coefficientborn.value.isNotEmpty() and coefficientdie.value.isNotEmpty() and countpeople.value.isNotEmpty() and yearend.value.isNotEmpty() and yearstart.value.isNotEmpty()) {
                     val starting = yearstart.value.toInt()
@@ -367,8 +387,8 @@ fun NTwoScreen(navController: NavController) {
                         )
                     })
                 TextField(
-                    coefficientdeath.value,
-                    { coefficientdeath.value = it },
+                    bornpredator.value,
+                    { bornpredator.value = it },
                     textStyle = LocalTextStyle.current.copy(
                         textAlign = TextAlign.Center, fontSize = 18.sp
                     ),
@@ -408,8 +428,8 @@ fun NTwoScreen(navController: NavController) {
                         )
                     })
                 TextField(
-                    bornpredator.value,
-                    { bornpredator.value = it },
+                    coefficientdeath.value,
+                    { coefficientdeath.value = it },
                     textStyle = LocalTextStyle.current.copy(
                         textAlign = TextAlign.Center, fontSize = 18.sp
                     ),
@@ -465,25 +485,35 @@ fun NTwoScreen(navController: NavController) {
                 if (bool.value.isNotEmpty()) {
                     if (countprey.value.isNotEmpty() and countpredator.value.isNotEmpty() and bornpredator.value.isNotEmpty() and bioprey.value.isNotEmpty() and deathpredator.value.isNotEmpty() and coefficientdeath.value.isNotEmpty()) {
                         var preys = countprey.value.toFloat()
-                        val listpreys: MutableList<Float> = mutableListOf(preys)
+                        var preys1: Float
+                        val listpreys: MutableList<Float> = mutableListOf()
+                        listpreys.add(preys)
                         var predators = countpredator.value.toFloat()
-                        val listpredators: MutableList<Float> = mutableListOf(predators)
-                        while ((preys != 0f) and (predators != 0f)) {
-                            if ((bioprey.value.toFloat() - coefficientdeath.value.toFloat() * predators) * preys + preys > 0) {
-                                preys += (bioprey.value.toFloat() - coefficientdeath.value.toFloat() * predators) * preys
+                        val listpredators: MutableList<Float> = mutableListOf()
+                        listpredators.add(predators)
+                        while (true) {
+                            if ((countpredator.value.toFloat() - bioprey.value.toFloat() * bornpredator.value.toFloat()) * countprey.value.toFloat() + countprey.value.toFloat() > 0) {
+                                preys =
+                                    (countpredator.value.toFloat() - bioprey.value.toFloat() * bornpredator.value.toFloat()) * countprey.value.toFloat() + countprey.value.toFloat()
                                 listpreys.add(preys)
                             } else {
                                 preys = 0f
                                 listpreys.add(preys)
                             }
-                            if ((bornpredator.value.toFloat() * preys - coefficientdeath.value.toFloat()) * predators + predators > 0) {
-                                predators += (bornpredator.value.toFloat() * preys - coefficientdeath.value.toFloat()) * predators
+                            if ((coefficientdeath.value.toFloat() * preys - deathpredator.value.toFloat()) * bornpredator.value.toFloat() + bornpredator.value.toFloat() > 0) {
+                                predators =
+                                    (coefficientdeath.value.toFloat() * preys - deathpredator.value.toFloat()) * bornpredator.value.toFloat() + bornpredator.value.toFloat()
                                 listpreys.add(predators)
                             } else {
                                 predators = 0f
                                 listpreys.add(predators)
                             }
-
+                            if (predators < 1) break
+                            if (preys < 1) break
+                            if (predators > 1000000) break
+                            if (preys > 1000000) break
+                            Log.d("ezzay", preys.toString())
+                            Log.d("ezzay1", predators.toString())
                         }
                         DrawTable(listpreys, listpredators)
                     } else {
@@ -511,5 +541,214 @@ fun NThreeScreen(navController: NavController) {
 
 @Composable
 fun NFourScreen(navController: NavController) {
-    Text("Выбор оптимального решения с помощью дерева решений")
+
+    val maxheight = 50.dp
+    val maxfontsizeall = 8.sp
+    val buying = remember { mutableStateOf("") }
+    val selling = remember { mutableStateOf("") }
+    val counttov = remember { mutableStateOf("") }
+    val ver1 = remember { mutableStateOf("") }
+    val ver2 = remember { mutableStateOf("") }
+    val ver3 = remember { mutableStateOf("") }
+    val ver4 = remember { mutableStateOf("") }
+    val bool = remember { mutableStateOf("") }
+    Column(
+        Modifier.fillMaxHeight(),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(
+            modifier = Modifier.fillMaxHeight(),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Text("Выбор оптимального решения с помощью дерева решений", fontSize = 18.sp)
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                TextField(
+                    buying.value,
+                    { buying.value = it },
+                    textStyle = LocalTextStyle.current.copy(
+                        textAlign = TextAlign.Center, fontSize = 18.sp
+                    ),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    singleLine = true,
+                    modifier = Modifier
+                        .width(100.dp)
+                        .height(maxheight),
+                    placeholder = {
+                        Text(
+                            "Стоимость 1 ед. закупки",
+                            fontSize = maxfontsizeall,
+                            textAlign = TextAlign.Center
+                        )
+                    })
+                TextField(
+                    selling.value,
+                    { selling.value = it },
+                    textStyle = LocalTextStyle.current.copy(
+                        textAlign = TextAlign.Center, fontSize = 18.sp
+                    ),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    singleLine = true,
+                    modifier = Modifier
+                        .width(100.dp)
+                        .height(maxheight),
+                    placeholder = {
+                        Text(
+                            "Стоимость 1 ед. продажи",
+                            fontSize = maxfontsizeall,
+                            textAlign = TextAlign.Center
+                        )
+                    })
+                TextField(
+                    ver1.value,
+                    { ver1.value = it },
+                    textStyle = LocalTextStyle.current.copy(
+                        textAlign = TextAlign.Center, fontSize = 18.sp
+                    ),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    singleLine = true,
+                    modifier = Modifier
+                        .width(100.dp)
+                        .height(maxheight),
+                    placeholder = {
+                        Text(
+                            "Отсутствие продаж",
+                            fontSize = maxfontsizeall,
+                            textAlign = TextAlign.Center
+                        )
+                    })
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                TextField(
+                    ver2.value,
+                    { ver2.value = it },
+                    textStyle = LocalTextStyle.current.copy(
+                        textAlign = TextAlign.Center, fontSize = 18.sp
+                    ),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    singleLine = true,
+                    modifier = Modifier
+                        .width(100.dp)
+                        .height(maxheight),
+                    placeholder = {
+                        Text(
+                            "Низкие продажи",
+                            fontSize = maxfontsizeall,
+                            textAlign = TextAlign.Center
+                        )
+                    })
+                TextField(
+                    ver3.value,
+                    { ver3.value = it },
+                    textStyle = LocalTextStyle.current.copy(
+                        textAlign = TextAlign.Center, fontSize = 18.sp
+                    ),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    singleLine = true,
+                    modifier = Modifier
+                        .width(100.dp)
+                        .height(maxheight),
+                    placeholder = {
+                        Text(
+                            "Средние продажи",
+                            fontSize = maxfontsizeall,
+                            textAlign = TextAlign.Center
+                        )
+                    })
+                TextField(
+                    ver4.value,
+                    { ver4.value = it },
+                    textStyle = LocalTextStyle.current.copy(
+                        textAlign = TextAlign.Center, fontSize = 18.sp
+                    ),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    singleLine = true,
+                    modifier = Modifier
+                        .width(100.dp)
+                        .height(maxheight),
+                    placeholder = {
+                        Text(
+                            "Высокие продажи",
+                            fontSize = maxfontsizeall,
+                            textAlign = TextAlign.Center
+                        )
+                    })
+            }
+            Row(
+                Modifier
+                    .fillMaxWidth(), Arrangement.SpaceEvenly
+            ) {
+                Button(
+                    modifier = Modifier
+                        .width(200.dp)
+                        .height(40.dp),
+                    onClick = { bool.value += "1" },
+                ) {
+                    Text(text = "Расчитать")
+                }
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                TextField(
+                    counttov.value,
+                    { counttov.value = it },
+                    textStyle = LocalTextStyle.current.copy(
+                        textAlign = TextAlign.Center, fontSize = 18.sp
+                    ),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    singleLine = true,
+                    modifier = Modifier
+                        .width(100.dp)
+                        .height(maxheight),
+                    placeholder = {
+                        Text(
+                            "Макимальное количество проданных товаров",
+                            fontSize = maxfontsizeall,
+                            textAlign = TextAlign.Center
+                        )
+                    })}
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .height(400.dp)
+            ) {
+                if (bool.value.isNotEmpty()) {
+                    if (buying.value.isNotEmpty() and selling.value.isNotEmpty() and ver1.value.isNotEmpty() and ver2.value.isNotEmpty() and ver3.value.isNotEmpty() and ver4.value.isNotEmpty()) {
+                        if(ver1.value.toFloat() + ver2.value.toFloat() + ver3.value.toFloat() + ver4.value.toFloat() != 1f){
+                            bool.value = ""
+                            Toast.makeText(
+                                LocalContext.current,
+                                "Сумма вероятностей должна быть равна 1",
+                                Toast.LENGTH_SHORT
+                            )
+                                .show()
+                        }else{
+
+                        }
+                    }else
+                    {
+                        bool.value = ""
+                        Toast.makeText(
+                            LocalContext.current,
+                            "Заполните все поля",
+                            Toast.LENGTH_SHORT
+                        )
+                            .show()
+                    }
+                }
+            }
+        }
+    }
 }
