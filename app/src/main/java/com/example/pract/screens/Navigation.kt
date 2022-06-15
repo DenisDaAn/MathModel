@@ -1,7 +1,5 @@
 package com.example.pract.screens
 
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -92,7 +90,7 @@ fun SampleLineGraph(lines: List<List<DataPoint>>, countstep: Int) {
                 points2.value = points.toString()
             }
         )
-        Text(text = points2.value)
+        Text(text = points2.value, Modifier.padding(top = 30.dp))
     }
 
 }
@@ -113,8 +111,8 @@ fun RowScope.TableCell(
 
 @Composable
 fun DrawTable(preys: MutableList<Float>, predators: MutableList<Float>) {
-    val column1Weight = .3f // 30%
-    val column2Weight = .7f // 70%
+    val column1Weight = .5f
+    val column2Weight = .5f
     LazyColumn(
         Modifier
             .fillMaxWidth()
@@ -137,6 +135,3 @@ fun DrawTable(preys: MutableList<Float>, predators: MutableList<Float>) {
         }*/
     }
 }
-
-
-

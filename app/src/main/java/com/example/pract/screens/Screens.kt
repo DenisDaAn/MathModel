@@ -289,7 +289,7 @@ fun NOneScreen(navController: NavController) {
                 .fillMaxWidth()
                 .height(350.dp)
         ) {
-            if(bool1.value.isNotEmpty()){
+            if (bool1.value.isNotEmpty()) {
                 yearstart.value = "1950"
                 yearend.value = "2050"
                 coefficientborn.value = "0.0212"
@@ -685,19 +685,6 @@ fun NFourScreen(navController: NavController) {
                     })
             }
             Row(
-                Modifier
-                    .fillMaxWidth(), Arrangement.SpaceEvenly
-            ) {
-                Button(
-                    modifier = Modifier
-                        .width(200.dp)
-                        .height(40.dp),
-                    onClick = { bool.value += "1" },
-                ) {
-                    Text(text = "Расчитать")
-                }
-            }
-            Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
@@ -718,7 +705,22 @@ fun NFourScreen(navController: NavController) {
                             fontSize = maxfontsizeall,
                             textAlign = TextAlign.Center
                         )
-                    })}
+                    })
+            }
+            Row(
+                Modifier
+                    .fillMaxWidth(), Arrangement.SpaceEvenly
+            ) {
+                Button(
+                    modifier = Modifier
+                        .width(200.dp)
+                        .height(40.dp),
+                    onClick = { bool.value += "1" },
+                ) {
+                    Text(text = "Расчитать")
+                }
+            }
+
             Row(
                 Modifier
                     .fillMaxWidth()
@@ -726,7 +728,7 @@ fun NFourScreen(navController: NavController) {
             ) {
                 if (bool.value.isNotEmpty()) {
                     if (buying.value.isNotEmpty() and selling.value.isNotEmpty() and ver1.value.isNotEmpty() and ver2.value.isNotEmpty() and ver3.value.isNotEmpty() and ver4.value.isNotEmpty()) {
-                        if(ver1.value.toFloat() + ver2.value.toFloat() + ver3.value.toFloat() + ver4.value.toFloat() != 1f){
+                        if (ver1.value.toFloat() + ver2.value.toFloat() + ver3.value.toFloat() + ver4.value.toFloat() != 1f) {
                             bool.value = ""
                             Toast.makeText(
                                 LocalContext.current,
@@ -734,11 +736,34 @@ fun NFourScreen(navController: NavController) {
                                 Toast.LENGTH_SHORT
                             )
                                 .show()
-                        }else{
-
+                        } else {
+                            var min = 0f
+                            var counter = 0
+                            val avgsell = Math.round((counttov.value.toFloat() + 1) / 2)
+                            val lowsell =
+                                1 * (selling.value.toFloat() - buying.value.toFloat()) * ver2.value.toFloat()
+                            val mediumsell =
+                                avgsell.toFloat() * (selling.value.toFloat() - buying.value.toFloat()) * ver3.value.toFloat()
+                            val highsell =
+                                counttov.value.toFloat() * (selling.value.toFloat() - buying.value.toFloat()) * ver4.value.toFloat()
+                            if (lowsell > mediumsell) {
+                                min = lowsell;
+                                counter = 1
+                            } else {
+                                min = mediumsell;
+                                counter = avgsell
+                            }
+                            if (min < highsell) {
+                                min = highsell;
+                                counter = counttov.value.toInt()
+                            }
+                            if ((ver1.value.toFloat() > ver2.value.toFloat()) and (ver1.value.toFloat() > ver3.value.toFloat()) and (ver1.value.toFloat() > ver4.value.toFloat())) {
+                                counter = 0
+                                min = 0f
+                            }
+                            Text(text = "Максимальная прибыль будет с $counter продаж. Выручка составит ${counter * (selling.value.toFloat() - buying.value.toFloat())} ед. денег.")
                         }
-                    }else
-                    {
+                    } else {
                         bool.value = ""
                         Toast.makeText(
                             LocalContext.current,
