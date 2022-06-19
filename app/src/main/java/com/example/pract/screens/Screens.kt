@@ -323,6 +323,8 @@ fun NOneScreen(navController: NavController) {
 
 @Composable
 fun NTwoScreen(navController: NavController) {
+    val main : List<DataPoint> = listOf(DataPoint(1f, 200f), DataPoint(2f, 178f),DataPoint(3f, 180f),DataPoint(4f, 181f),DataPoint(5f, 181f),DataPoint(6f, 180f),DataPoint(7f, 178f),DataPoint(8f, 176f),DataPoint(9f, 173f),DataPoint(10f, 170f),DataPoint(11f, 167f),DataPoint(12f, 163f),DataPoint(13f, 160f),DataPoint(14f, 156f),DataPoint(15f, 152f),DataPoint(16f, 149f),DataPoint(17f, 145f),DataPoint(18f, 141f),DataPoint(19f, 138f),DataPoint(20f, 134f),DataPoint(21f, 130f))
+
     val maxheight = 50.dp
     val maxfontsizeall = 8.sp
     val countprey = remember { mutableStateOf("") }
@@ -369,8 +371,8 @@ fun NTwoScreen(navController: NavController) {
                         )
                     })
                 TextField(
-                    bioprey.value,
-                    { bioprey.value = it },
+                    countpredator.value,
+                    { countpredator.value = it },
                     textStyle = LocalTextStyle.current.copy(
                         textAlign = TextAlign.Center, fontSize = 18.sp
                     ),
@@ -387,8 +389,8 @@ fun NTwoScreen(navController: NavController) {
                         )
                     })
                 TextField(
-                    bornpredator.value,
-                    { bornpredator.value = it },
+                    bioprey.value,
+                    { bioprey.value = it },
                     textStyle = LocalTextStyle.current.copy(
                         textAlign = TextAlign.Center, fontSize = 18.sp
                     ),
@@ -410,8 +412,8 @@ fun NTwoScreen(navController: NavController) {
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 TextField(
-                    countpredator.value,
-                    { countpredator.value = it },
+                    bornpredator.value,
+                    { bornpredator.value = it },
                     textStyle = LocalTextStyle.current.copy(
                         textAlign = TextAlign.Center, fontSize = 18.sp
                     ),
@@ -485,37 +487,33 @@ fun NTwoScreen(navController: NavController) {
                 if (bool.value.isNotEmpty()) {
                     if (countprey.value.isNotEmpty() and countpredator.value.isNotEmpty() and bornpredator.value.isNotEmpty() and bioprey.value.isNotEmpty() and deathpredator.value.isNotEmpty() and coefficientdeath.value.isNotEmpty()) {
                         var preys = countprey.value.toFloat()
-                        var preys1: Float
-                        val listpreys: MutableList<Float> = mutableListOf()
-                        listpreys.add(preys)
-                        var predators = countpredator.value.toFloat()
-                        val listpredators: MutableList<Float> = mutableListOf()
-                        listpredators.add(predators)
-                        while (true) {
-                            if ((countpredator.value.toFloat() - bioprey.value.toFloat() * bornpredator.value.toFloat()) * countprey.value.toFloat() + countprey.value.toFloat() > 0) {
+                        var listpreys: MutableList<DataPoint> = mutableListOf()
+                        listpreys.add(DataPoint(1f, preys.toFloat()))
+                        var predators = bornpredator.value.toFloat()
+                        var listpredators: MutableList<DataPoint> = mutableListOf()
+                        listpredators.add(DataPoint(1f, predators.toFloat()))
+                        for (i in 2..150) {
+                            if ((countpredator.value.toFloat() - bioprey.value.toFloat() * bornpredator.value.toFloat()) * preys.toFloat() + preys.toFloat() > 0) {
                                 preys =
-                                    (countpredator.value.toFloat() - bioprey.value.toFloat() * bornpredator.value.toFloat()) * countprey.value.toFloat() + countprey.value.toFloat()
-                                listpreys.add(preys)
+                                    (countpredator.value.toFloat() - bioprey.value.toFloat() * bornpredator.value.toFloat()) * preys.toFloat() + preys.toFloat()
+                                listpreys.add(DataPoint(i.toFloat(), preys.toFloat()))
                             } else {
                                 preys = 0f
-                                listpreys.add(preys)
+                                listpreys.add(DataPoint(i.toFloat(), preys.toFloat()))
                             }
-                            if ((coefficientdeath.value.toFloat() * preys - deathpredator.value.toFloat()) * bornpredator.value.toFloat() + bornpredator.value.toFloat() > 0) {
+                            Log.d("valueq1", preys.toString())
+                            if ((coefficientdeath.value.toFloat() * preys - deathpredator.value.toFloat()) * predators.toFloat() + predators.toFloat() > 0) {
                                 predators =
-                                    (coefficientdeath.value.toFloat() * preys - deathpredator.value.toFloat()) * bornpredator.value.toFloat() + bornpredator.value.toFloat()
-                                listpreys.add(predators)
+                                    (coefficientdeath.value.toFloat() * preys - deathpredator.value.toFloat()) * predators.toFloat() + predators.toFloat()
                             } else {
                                 predators = 0f
-                                listpreys.add(predators)
+                                listpreys.add(DataPoint(i.toFloat(), predators.toFloat()))
                             }
-                            if (predators < 1) break
-                            if (preys < 1) break
-                            if (predators > 1000000) break
-                            if (preys > 1000000) break
-                            Log.d("ezzay", preys.toString())
-                            Log.d("ezzay1", predators.toString())
+                            Log.d("valueq1", predators.toString())
                         }
-                        DrawTable(listpreys, listpredators)
+                        val f: List<List<DataPoint>> =
+                            listOf(listpreys.toList(), main.toList())
+                        SampleLineGraph2(lines = f, countstep = 10)
                     } else {
                         bool.value = ""
                         Toast.makeText(

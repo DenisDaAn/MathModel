@@ -94,6 +94,61 @@ fun SampleLineGraph(lines: List<List<DataPoint>>, countstep: Int) {
     }
 
 }
+@Composable
+fun SampleLineGraph2(lines: List<List<DataPoint>>, countstep: Int) {
+    val context = LocalContext.current
+    val points2 = remember { mutableStateOf("") }
+    val stroke = Stroke(
+        width = 5f,
+        pathEffect = PathEffect.dashPathEffect(floatArrayOf(15f, 15f), 1f)
+    )
+
+    Box(
+        Modifier
+            .fillMaxSize()
+            .height(350.dp)
+            .padding(20.dp), contentAlignment = Alignment.BottomCenter
+    ) {
+        Canvas(
+            Modifier
+                .fillMaxWidth()
+                .height(450.dp)
+                .padding(20.dp)
+        ) {
+            drawRoundRect(color = Color.Red, style = stroke)
+        }
+        LineGraph(
+            plot = LinePlot(
+                listOf(
+                    LinePlot.Line(
+                        dataPoints = lines[0],
+                        LinePlot.Connection(color = Color.Blue),
+                        LinePlot.Intersection(color = Color.Blue),
+                        LinePlot.Highlight(color = Color.Blue),
+                        //LinePlot.XAxis(stepSize = 20.dp, steps = 1, paddingBottom = 10.dp, paddingTop = 10.dp, unit = 1f, roundToInt = false, content = {}
+                    ),
+                    LinePlot.Line(
+                        dataPoints = lines[1],
+                        LinePlot.Connection(color = Color.Black),
+                        LinePlot.Intersection(color = Color.Black),
+                        LinePlot.Highlight(color = Color.Black),
+                        //LinePlot.XAxis(stepSize = 20.dp, steps = 1, paddingBottom = 10.dp, paddingTop = 10.dp, unit = 1f, roundToInt = false, content = {}
+                    )
+                ),
+                grid = LinePlot.Grid(Color.Blue, steps = countstep),
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(350.dp)
+                .padding(20.dp),
+            onSelection = { xLine, points ->
+                points2.value = points.toString()
+            }
+        )
+        Text(text = points2.value, Modifier.padding(top = 30.dp))
+    }
+
+}
 
 @Composable
 fun RowScope.TableCell(
